@@ -112,8 +112,39 @@ void tp() {
 
     print_gdt_content(new_gdtr_ptr);
 
+    /*
+    seg_sel_t my_cs;
+    my_cs.index = 3;
+    my_cs.ti = 0;
+    my_cs.rpl = 0;
+    set_cs(my_cs);
+    */
+
     char  src[64];
     char *dst = 0;
     memset(src, 0xff, 64);
+
+    // Nouveau descripteur
+    new_gdt[3].limit_1 = 0x20;   //:32;     /* bits 00-15 of the segment limit */
+    new_gdt[3].base_1 = 0x0000;    //:16;     /* bits 00-15 of the base address */
+    new_gdt[3].base_2 = 0x60;      //:8;      /* bits 16-23 of the base address */
+    new_gdt[3].type = 3; //data,RW //:4;      /* segment type */
+    new_gdt[3].s = 1;              //:1;      /* descriptor type */
+    new_gdt[3].dpl = 0; //ring0    //:2;      /* descriptor privilege level */
+    new_gdt[3].p = 1;              //:1;      /* segment present flag */
+    new_gdt[3].limit_2 = 0x0;      //:4;      /* bits 16-19 of the segment limit */
+    new_gdt[3].avl = 1;            //:1;      /* available for fun and profit */
+    new_gdt[3].l = 0; // 32 bits   //:1;      /* longmode */
+    new_gdt[3].d = 1;              //:1;      /* default length, depend on seg type */
+    new_gdt[3].g = 0;              //:1;      /* granularity */
+    new_gdt[3].base_3 = 0x00;      //:8;      /* bits 24-31 of the base address */
+
+    // Charger le sélecteur de segment "es" de manière à adresser ce nouveau
+    seg_sel_t my_es;
+    my_es.index = 3;
+    my_es.ti = 0;
+    my_es.rpl = 0;
+    set_es(my_es);
+
     _memcpy8(dst, src, 32);
 }
