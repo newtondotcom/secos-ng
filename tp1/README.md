@@ -60,20 +60,30 @@ point d'entrée du noyau.
 * Le segment de pile (sélecteur ss)
 * D'autres segments (sélecteurs autres : es, fs, gs, etc.)
 
-`SEG_DESC_DATA_R`, `SEG_DESC_CODE_XRA`, `SEG_DESC_DATA_RWA` et `SEG_DESC_CODE_CXRA` sont donc utilisés.
-
 ```c
-SS: 16
-DS: 16
-ES: 16
-FS: 16
-GS: 16
-CS: 8
+0 [0x0 - 0xfff0] seg_t: 0x0 desc_t: 0 priv: 0 present: 0 avl: 0 longmode: 0 default: 0 gran: 0 
+1 [0x0 - 0xffffffff] seg_t: 0xb desc_t: 1 priv: 0 present: 1 avl: 0 longmode: 0 default: 1 gran: 1 
+2 [0x0 - 0xffffffff] seg_t: 0x3 desc_t: 1 priv: 0 present: 1 avl: 0 longmode: 0 default: 1 gran: 1 
+3 [0x0 - 0xffff] seg_t: 0xf desc_t: 1 priv: 0 present: 1 avl: 0 longmode: 0 default: 0 gran: 0 
+4 [0x0 - 0xffff] seg_t: 0x3 desc_t: 1 priv: 0 present: 1 avl: 0 longmode: 0 default: 0 gran: 0 
+SS: 2
+DS: 2
+ES: 2
+FS: 2
+GS: 2
+CS: 1
 ```
+
+Tous les sélecteurs de segment pointent vers sur le 3eme sélecteur sauf `CS` qui pointe vers le deuxième. `SEG_DESC_CODE_XRA` et `SEG_DESC_DATA_RWA` sont donc utilisés.
 
 **Q4 : Que constate-t-on ? Que dire de la ségrégation mémoire mise en place
   par défaut par GRUB avec une telle configuration ?**
 
+**Utilisation Partagée des Segments :** Tous les segments de données (DS, SS, ES, FS, GS) pointent vers le même descripteur, ce qui signifie qu'ils accèdent potentiellement à la même zone de mémoire. Cela peut limiter la sécurité et l'isolation entre les différents segments, surtout si plusieurs processus s'exécutent.
+
+**Sécurité et Isolation :** La segmentation n'est pas pleinement exploitée, car plusieurs segments partagent le même descripteur. Cela pourrait entraîner des risques si un processus réussit à écrire dans un segment de données partagé.
+
+**Simplicité de la Configuration :** Cette configuration simplifiée est souvent suffisante pour des environnements d'exécution de base ou pour des systèmes d'exploitation simples, mais elle peut être insuffisante pour des systèmes plus complexes nécessitant une isolation stricte des processus
 
 ## Une première reconfiguration de la GDT : en mode "flat"
 

@@ -37,22 +37,22 @@ void print_gdt_content(gdt_reg_t gdtr_ptr) {
 
 void print_segment_selector(){
     uint16_t ss_value = get_ss();
-    printf("SS: %d\n", ss_value);
+    printf("SS: %d\n", ss_value >> 3);
     
     uint16_t ds_value = get_ds();
-    printf("DS: %d\n", ds_value);
+    printf("DS: %d\n", ds_value >> 3);
     
     uint16_t es_value = get_es();
-    printf("ES: %d\n", es_value);
+    printf("ES: %d\n", es_value >> 3);
     
     uint16_t fs_value = get_fs();
-    printf("FS: %d\n", fs_value);
+    printf("FS: %d\n", fs_value >> 3);
     
     uint16_t gs_value = get_gs();
-    printf("GS: %d\n", gs_value);
+    printf("GS: %d\n", gs_value >> 3);
 
     uint16_t cs_value = get_cs();
-    printf("CS: %d\n", cs_value);
+    printf("CS: %d\n", cs_value >> 3);
 }
 
 void tp() {
