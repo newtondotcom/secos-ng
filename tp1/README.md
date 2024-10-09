@@ -39,6 +39,14 @@ point d'entrée du noyau.
   de base de la GDT en cours d'utilisation ainsi que sa "limite" (type utile :
   `gdt_reg_t`).**
 
+  L'instruction SGDT (Store Global Descriptor Table) est une instruction utilisée en langage d'assemblage x86 pour stocker l'adresse de la Global Descriptor Table (GDT) dans un registre ou une mémoire.
+  ```c
+  #define get_gdtr(aLocation)       \
+   asm volatile ("sgdt %0"::"m"(aLocation):"memory")
+   #define set_gdtr(val)             \
+   asm volatile ("lgdt  %0"::"m"(val):"memory")
+  ```
+
 **Q2\* :  Dans [`tp.c`](./tp.c), un exemple d'implémentation d'affichage du
   contenu de table de type GDT est fournie (fonction `print_gdt_content`).
   L'utiliser pour afficher le contenu de la GDT courante.**
