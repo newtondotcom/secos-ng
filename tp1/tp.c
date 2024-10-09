@@ -1,6 +1,7 @@
 /* GPLv2 (c) Airbus */
 #include <debug.h>
 #include <segmem.h>
+#include <string.h>
 
 void userland() {
    asm volatile ("mov %eax, %cr0");
@@ -101,10 +102,18 @@ void tp() {
     printf("Nouvelle GDT : %lu\n", (long unsigned int)new_gdt);
 
 
+    // Mettre à jour les sélecteurs de segment (cs/ss/ds/...) afin qu'ils pointent vers les descripteurs précédemment définis.
     set_gdtr(new_gdt);
     gdt_reg_t new_gdtr_ptr;
-    // get_gdtr(new_gdtr_ptr); -- MARCHE PAS
+    // Charger l'adresse de base de la nouvelle GDT
     new_gdtr_ptr.addr = (long unsigned int)new_gdt;
     new_gdtr_ptr.limit = sizeof(new_gdt) -1;
+    // get_gdtr(new_gdtr_ptr); -- MARCHE PAS
+
     print_gdt_content(new_gdtr_ptr);
+
+    char  src[64];
+    char *dst = 0;
+    memset(src, 0xff, 64);
+    _memcpy8(dst, src, 32);
 }
