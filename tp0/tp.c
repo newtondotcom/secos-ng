@@ -47,4 +47,11 @@ void tp()
    debug("Reserved mem (at: 0xf0000):  before: 0x%x ", *ptr_in_reserved_mem); // read
    *ptr_in_reserved_mem = 0xaaaaaaaa;                           // write
    debug("after: 0x%x\n", *ptr_in_reserved_mem);                // check
+
+
+   int *ptr_out_physical_mem;
+   ptr_out_physical_mem = (int*)0x1cf08eafff;
+   debug("Reserved mem (at: 0xf0000):  before: 0x%x ", *ptr_out_physical_mem); // read
+   *ptr_out_physical_mem = 0xaaaaaaaa;                           // write
+   debug("after: 0x%x\n", *ptr_out_physical_mem);  
 }
