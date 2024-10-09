@@ -50,8 +50,8 @@ void tp()
 
 
    int *ptr_out_physical_mem;
-   ptr_out_physical_mem = (int*)0x1cf08eafff;
-   debug("Reserved mem (at: 0xf0000):  before: 0x%x ", *ptr_out_physical_mem); // read
+   ptr_out_physical_mem = (int*)0x8000000;
+   debug("Reserved mem (at: 0x8000000 > 0x1000000 = 128Mb):  before: 0x%x ", *ptr_out_physical_mem); // read
    *ptr_out_physical_mem = 0xaaaaaaaa;                           // write
    debug("after: 0x%x\n", *ptr_out_physical_mem);  
 }
