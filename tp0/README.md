@@ -49,6 +49,18 @@ provient la valeur de point d'entrée à `0x302010` au lieu de `0x300000`.**
 
 Note : il est possible de s'aider également de la page wiki sur les options de [linkage](https://github.com/agantet/secos-ng/wiki/Tooling#options-de-linkage).
 
+Taille de `.mbh` : 0x0000c avec un alignement de 0x4
+Taille de `.stack` : 0x02000 avec un alignement de 0x10
+
+Dans [linker.lds](), on a 
+```lds
+   .mbh      : { KEEP(*(.mbh)) . = ALIGN(4);     } : phboot
+   .stack    : { KEEP(*(.stack))                 } : phstack
+``` 
+donc `.mbh` sera alignée à l'aide de l'alignement affiché par 
+```bash
+readelf -l kernel.elf
+```
 
 ## Cartographie mémoire au démarrage
 
