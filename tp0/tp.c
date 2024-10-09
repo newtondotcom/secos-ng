@@ -35,4 +35,16 @@ void tp()
       printf(" [0x%llx - 0x%llx] %s\n", entry->addr, entry->addr + entry->len - 1, type);
       entry++;
    }
+
+   int *ptr_in_available_mem;
+   ptr_in_available_mem = (int*)0x0;
+   debug("Available mem (0x0): before: 0x%x ", *ptr_in_available_mem); // read
+   *ptr_in_available_mem = 0xaaaaaaaa;                           // write
+   debug("after: 0x%x\n", *ptr_in_available_mem);                // check
+
+   int *ptr_in_reserved_mem;
+   ptr_in_reserved_mem = (int*)0xf0000;
+   debug("Reserved mem (at: 0xf0000):  before: 0x%x ", *ptr_in_reserved_mem); // read
+   *ptr_in_reserved_mem = 0xaaaaaaaa;                           // write
+   debug("after: 0x%x\n", *ptr_in_reserved_mem);                // check
 }

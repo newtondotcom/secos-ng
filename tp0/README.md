@@ -115,6 +115,13 @@ debug("after: 0x%x\n", *ptr_in_reserved_mem);                // check
 ```
 Le comportement observé semble-t-il cohérent ?
 
+Lorsqu'on tente d'écrire sur ce pointeur, il est déplacé
+```bash
+Available mem (0x0): before: 0xf000ff53 after: 0xaaaaaaaa
+Reserved mem (at: 0xf0000):  before: 0xf14738b after: 0xf14738b
+```
+dans une zone marquée comme free lors de la cartographie.
+
 **Q4 : Compléter la fonction `tp()` de [tp.c](./tp.c) pour essayer de lire ou
   écrire à une adresse en dehors de la mémoire physique disponible (128 MB).
   Que se passe-t-il ? Comment pourrait-on l'expliquer ?**
