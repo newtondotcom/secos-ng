@@ -60,6 +60,17 @@ point d'entrée du noyau.
 * Le segment de pile (sélecteur ss)
 * D'autres segments (sélecteurs autres : es, fs, gs, etc.)
 
+`SEG_DESC_DATA_R`, `SEG_DESC_CODE_XRA`, `SEG_DESC_DATA_RWA` et `SEG_DESC_CODE_CXRA` sont donc utilisés.
+
+```c
+SS: 16
+DS: 16
+ES: 16
+FS: 16
+GS: 16
+CS: 8
+```
+
 **Q4 : Que constate-t-on ? Que dire de la ségrégation mémoire mise en place
   par défaut par GRUB avec une telle configuration ?**
 

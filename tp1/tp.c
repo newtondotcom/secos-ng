@@ -35,9 +35,30 @@ void print_gdt_content(gdt_reg_t gdtr_ptr) {
     }
 }
 
+void print_segment_selector(){
+    uint16_t ss_value = get_ss();
+    printf("SS: %d\n", ss_value);
+    
+    uint16_t ds_value = get_ds();
+    printf("DS: %d\n", ds_value);
+    
+    uint16_t es_value = get_es();
+    printf("ES: %d\n", es_value);
+    
+    uint16_t fs_value = get_fs();
+    printf("FS: %d\n", fs_value);
+    
+    uint16_t gs_value = get_gs();
+    printf("GS: %d\n", gs_value);
+
+    uint16_t cs_value = get_cs();
+    printf("CS: %d\n", cs_value);
+}
 
 void tp() {
     gdt_reg_t gdtr_ptr;
     get_gdtr(gdtr_ptr);
     print_gdt_content(gdtr_ptr);
+
+    print_segment_selector();
 }
