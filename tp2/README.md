@@ -146,6 +146,8 @@ Pour retrouver cette valeur dans le code kernel et voit ce à quoi elle correspo
   interruption et qu'il est impératif de sauvegarder avant tout traitement de
   l'interruption ? L'implémenter en assembleur inline dans  `bp_handler`.**
 
+  La valeur de retour de la fonction bp_handler() ainsi que le contexte. 
+
 **Q9\* : Par quelle instruction doit se terminer la routine pour que le noyau
   rende la main à la fonction tp() ? L'implémenter en assembleur inline dans
   `bp_handler`.**
