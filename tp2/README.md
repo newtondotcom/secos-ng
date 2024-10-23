@@ -152,6 +152,8 @@ Pour retrouver cette valeur dans le code kernel et voit ce à quoi elle correspo
   rende la main à la fonction tp() ? L'implémenter en assembleur inline dans
   `bp_handler`.**
 
+  Ne pas oublier le leave -> revoir cours asm
+
 **Q10 : Tester que le retour du traitement de l'interruption s'est effectué
   correctement en affichant un message de debug dans la fonction `bp_trigger()` 
   après le déclenchement du breakpoint.**
