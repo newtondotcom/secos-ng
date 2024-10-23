@@ -90,6 +90,8 @@ qu'elle puisse gérer l'exception #BP. Le but est de ne pas modifier
   impact sur la pile ? Est-ce cohérent avec ce qui était sur la pile au
   moment de l'arrivée d'une interruption ?**
 
+  La dernière instruction de la fonction bp_handler est ret. Elle vide la pile (en faisant des pop). Le problème est qu'il manque l'adresse de retour 
+
 ### Deuxième essai : via l'assembleur inline
 
 L'idée est de réécrire `bp_handler` en assembleur inline pour éviter l'écueil
