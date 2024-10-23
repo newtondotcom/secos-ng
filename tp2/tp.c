@@ -3,6 +3,7 @@
 #include <intr.h>
 
 void bp_handler() {
+	asm volatile ("pusha");
 	
 	uint32_t val;
 	asm volatile ("mov 4(%%ebp), %0":"=r"(val));
@@ -10,7 +11,8 @@ void bp_handler() {
    
 	debug("bp_handler triggered\n");
 
-	asm volatile ("pusha");
+	asm volatile ("popa"); 
+	asm volatile ("leave; iret");  
 }
 
 void bp_trigger() {
