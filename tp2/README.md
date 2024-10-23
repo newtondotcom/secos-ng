@@ -113,6 +113,7 @@ qu'elle puisse gérer l'exception #BP. Le but est de ne pas modifier
   ```
 
   La dernière instruction de la fonction bp_handler est ret. Elle vide la pile (en faisant des pop). Le problème est qu'il manque l'adresse de retour.
+  `ret` est un pour un appel de fonction classique, or la fonction est exécutée par son contexte donc le contexte est inexistant. On utilisera `iret`.
 
 ### Deuxième essai : via l'assembleur inline
 
@@ -152,7 +153,7 @@ Pour retrouver cette valeur dans le code kernel et voit ce à quoi elle correspo
   rende la main à la fonction tp() ? L'implémenter en assembleur inline dans
   `bp_handler`.**
 
-  Ne pas oublier le leave -> revoir cours asm
+  Ne pas oublier le leave -> revoir cours asm pour allocation mémoire je crois
 
 **Q10 : Tester que le retour du traitement de l'interruption s'est effectué
   correctement en affichant un message de debug dans la fonction `bp_trigger()` 
