@@ -90,7 +90,29 @@ qu'elle puisse gérer l'exception #BP. Le but est de ne pas modifier
   impact sur la pile ? Est-ce cohérent avec ce qui était sur la pile au
   moment de l'arrivée d'une interruption ?**
 
-  La dernière instruction de la fonction bp_handler est ret. Elle vide la pile (en faisant des pop). Le problème est qu'il manque l'adresse de retour 
+  ```bash
+  root@insa-21123:~/secos-ng/tp2# objdump -D kernel.elf | grep -A 18 "bp_handler"
+  00303fca <bp_handler>:
+    303fca:       55                      push   %ebp
+    303fcb:       89 e5                   mov    %esp,%ebp
+    303fcd:       83 ec 18                sub    $0x18,%esp
+    303fd0:       8b 45 04                mov    0x4(%ebp),%eax
+    303fd3:       89 45 f4                mov    %eax,-0xc(%ebp)
+    303fd6:       83 ec 08                sub    $0x8,%esp
+    303fd9:       ff 75 f4                push   -0xc(%ebp)
+    303fdc:       68 86 48 30 00          push   $0x304886
+    303fe1:       e8 ea f0 ff ff          call   3030d0 <printf>
+    303fe6:       83 c4 10                add    $0x10,%esp
+    303fe9:       83 ec 0c                sub    $0xc,%esp
+    303fec:       68 a0 48 30 00          push   $0x3048a0
+    303ff1:       e8 da f0 ff ff          call   3030d0 <printf>
+    303ff6:       83 c4 10                add    $0x10,%esp
+    303ff9:       90                      nop
+    303ffa:       c9                      leave  
+    303ffb:       c3                      ret   
+  ```
+
+  La dernière instruction de la fonction bp_handler est ret. Elle vide la pile (en faisant des pop). Le problème est qu'il manque l'adresse de retour.
 
 ### Deuxième essai : via l'assembleur inline
 
