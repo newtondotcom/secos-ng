@@ -161,3 +161,5 @@ Pour retrouver cette valeur dans le code kernel et voit ce à quoi elle correspo
 **Q11 : Quelles conclusions peut-on tirer du développement en C d'un
   gestionnaire d'interruption ? Pourquoi l'assembleur semble-t-il plus
   approprié ?**
+
+  Je dirais que ça se fait en C mais comme il faut gérer la pile et tout et que cela se fait directement avec des instructions assembleur il vaut mieux le faire directement en assembleur.
