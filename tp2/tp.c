@@ -7,15 +7,13 @@ void bp_handler() {
 }
 
 void bp_trigger() {
-	// TODO
+	__asm__("int $3"); 
 }
 
 void tp() {
-	// TODO print idtr
 	idt_reg_t idtr;
 	get_idtr(idtr);
 	debug("%x\n",(unsigned int)idtr.addr);
 
-	// TODO call bp_trigger
-   //bp_trigger();
+   	bp_trigger();
 }
