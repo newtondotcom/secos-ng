@@ -9,6 +9,8 @@ void bp_handler() {
 	debug("Addresse de ebp-4 : 0x%x\n",val);
    
 	debug("bp_handler triggered\n");
+
+	asm volatile ("pusha");
 }
 
 void bp_trigger() {
