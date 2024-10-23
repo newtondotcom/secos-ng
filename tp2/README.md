@@ -107,6 +107,17 @@ de l'essai précédent.
 **Quelle signification cette valeur a-t-elle ? S'aider à nouveau de `objdump -D`
 pour comparer cette valeur à une adresse de votre noyau.**
 
+L'asm volatile affiche la valeur de ebp-4 qui est là où est stocké l'adresse de retour. Donc la signification de val est l'adresse de retour.
+Donc pour qu'on puisse y voir plus clair addr vaut 304d60 et val vaut 303f9b
+Pour retrouver cette valeur dans le code kernel et voit ce à quoi elle correspond on fait : objdump -D kernel.elf > q7 puis cat q7 | grep 303f9b -B 5 -A 5 (B pour before et A pour after) : 
+00303f97 <bp_trigger>:
+  303f97:       55                      push   %ebp
+  303f98:       89 e5                   mov    %esp,%ebp
+  303f9a:       cc                      int3
+  303f9b:       90                      nop  <------------------------ ebp-4 = saved EIP! Le nop sauve un peu le contexte je crois et c'est comme ça qu'on est censé savoir
+  303f9c:       5d                      pop    %ebp
+  303f9d:       c3                      ret
+
 **Q8\* : Qu'est-ce qui n'est pas stocké par le CPU à l'arrivée d'une
   interruption et qu'il est impératif de sauvegarder avant tout traitement de
   l'interruption ? L'implémenter en assembleur inline dans  `bp_handler`.**
