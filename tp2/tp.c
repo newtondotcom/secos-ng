@@ -17,6 +17,7 @@ void bp_handler() {
 
 void bp_trigger() {
 	__asm__("int $3"); 
+	printf("Retour apres avoir gerer BP\n"); 
 }
 
 void tp() {
