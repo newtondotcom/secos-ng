@@ -3,7 +3,7 @@
 #include <intr.h>
 
 void bp_handler() {
-   // TODO
+	debug("bp_handler");
 }
 
 void bp_trigger() {
@@ -14,7 +14,7 @@ void tp() {
 	// TODO print idtr
 	idt_reg_t idtr;
 	get_idtr(idtr);
-	debug("%d\n",(unsigned int)idtr.addr);
+	debug("%x\n",(unsigned int)idtr.addr);
 
 	// TODO call bp_trigger
    //bp_trigger();
