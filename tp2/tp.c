@@ -6,7 +6,7 @@ void bp_handler() {
 	
 	uint32_t val;
 	asm volatile ("mov 4(%%ebp), %0":"=r"(val));
-	debug("Addresse de ebp-4 : 0%x");
+	debug("Addresse de ebp-4 : 0x%x\n",val);
    
 	debug("bp_handler triggered\n");
 }
