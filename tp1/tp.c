@@ -80,7 +80,6 @@ void tp() {
 
     // Q5
     seg_desc_t my_gdt[7];
-    my_gdt[0].raw = 0ULL;
     my_gdt[1].limit_1 = 0xffff;   //:16;     /* bits 00-15 of the segment limit */
     my_gdt[1].base_1 = 0x0000;    //:16;     /* bits 00-15 of the base address */
     my_gdt[1].base_2 = 0x00;      //:8;      /* bits 16-23 of the base address */
