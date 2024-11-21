@@ -32,8 +32,7 @@ void __attribute__((section(".user"))) sys_compteur() {
 void handle_compteur() {
 	asm volatile ("int3");
 	debug("Fin interruption");}
-=======
-void tache1() {
+}void tache1() {
    asm volatile ("mov %eax, %cr0");
    debug("after iret\n");
 }
@@ -57,7 +56,7 @@ void noyauIdentityMapped(){
 	uint32_t cr0 = get_cr0();
 	set_cr0(cr0|CR0_PG);
 
-
+}
 	// Préparer la pile pour l'exécution en ring 3 de la tache 1
    asm volatile (
    "push %0    \n" // ss
@@ -95,8 +94,6 @@ void test_ring0()
     debug("We are in ring 0!\n");
     asm volatile("leave");
 }
-
-<<<<<<< HEAD
 void bp_handler() {
    asm volatile ("pusha");
    debug("#BP handling\n");
@@ -105,11 +102,7 @@ void bp_handler() {
    debug("EIP = %x\n", (unsigned int) eip);
    asm volatile ("popa");
    asm volatile ("leave; iret");
-    // end Q9
-
-    // Q11
-   // Dev en C rajoute les frames de fonction non désirées...
-    // end Q11
+   
 }
 
 void bp_trigger() {
