@@ -13,6 +13,7 @@
 #define d3_sel  gdt_usr_seg_sel(d3_idx)
 #define ts_sel  gdt_krn_seg_sel(ts_idx)
 
+<<<<<<< HEAD
 uint64_t *compteur;
 
 void __attribute__((section(".user"))) sys_affichage(uint32_t *counter) {
@@ -31,6 +32,11 @@ void __attribute__((section(".user"))) sys_compteur() {
 void handle_compteur() {
 	asm volatile ("int3");
 	debug("Fin interruption");
+=======
+void tache1() {
+   asm volatile ("mov %eax, %cr0");
+   debug("after iret\n");
+>>>>>>> 1d3a54687615e5dbdc8ad4a434002fbbbe00629a
 }
 
 void noyauIdentityMapped(){
@@ -91,6 +97,7 @@ void test_ring0()
     asm volatile("leave");
 }
 
+<<<<<<< HEAD
 void bp_handler() {
    asm volatile ("pusha");
    debug("#BP handling\n");
@@ -123,6 +130,13 @@ void tp() {
 	*compteur = 0;
 	init_gdt();
 	sys_compteur();
+=======
+void tp() {
+
+	// Initialisation de la GDT
+	init_gdt();
+
+>>>>>>> 1d3a54687615e5dbdc8ad4a434002fbbbe00629a
 	// Identity Mapping du noyau
 	noyauIdentityMapped();
 }
