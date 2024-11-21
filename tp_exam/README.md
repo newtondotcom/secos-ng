@@ -28,7 +28,7 @@ Permettre un ordonnancement préemptif de 2 tâches (T1 et T2) en ring 3 :
  - La tâche 2 affiche le compteur depuis la zone de mémoire partagée
  - L'affichage dans la tâche 2 s'effectuera à l'aide d'un appel système :
    + L'interface utilisateur :
-     - A le prototype: `void sys_counter(uint32_t *counter);`
+     - A le prototype: `void sys_counter(uint32_t *counter);
      - Notez bien que l'argument est une adresse virtuelle ring 3
    + L'interface noyau :
      - Est installée à l'interruption `0x80`

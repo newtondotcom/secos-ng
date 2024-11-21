@@ -27,4 +27,12 @@ SECTIONS
    /DISCARD/ : { *(.note* .indent .comment)      } : phsetup
 
    __kernel_end__ = .;
+
+   . = ALIGN(4M);
+   __user_start__ = .;
+   .user    : { *(.user)                       } : phuser
+   .user_data : { *(.user_data) *(.user_shared_mem) *(.user_stack) *(.user_bss) } : phsetup  
+   __user_end__ = .;
 }
+
+

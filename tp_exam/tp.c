@@ -13,9 +13,24 @@
 #define d3_sel  gdt_usr_seg_sel(d3_idx)
 #define ts_sel  gdt_krn_seg_sel(ts_idx)
 
-void tache1() {
-   asm volatile ("mov %eax, %cr0");
-   debug("after iret\n");
+uint64_t *compteur;
+
+void __attribute__((section(".user"))) sys_affichage(uint32_t *counter) {
+	debug("Counter value: 0x%" PRIu32 "\n", *counter);
+   //asm volatile ("mov %eax, %cr0");
+   //debug("after iret\n");
+}
+
+void __attribute__((section(".user"))) sys_compteur() {
+	while(true){
+		*compteur = *compteur + 1;
+		handler_compteur();
+	}
+}
+
+void handle_compteur() {
+	asm volatile ("int3");
+	debug("Fin interruption");
 }
 
 void noyauIdentityMapped(){
@@ -76,11 +91,38 @@ void test_ring0()
     asm volatile("leave");
 }
 
+void bp_handler() {
+   asm volatile ("pusha");
+   debug("#BP handling\n");
+   uint32_t eip;
+   asm volatile ("mov 4(%%ebp), %0":"=r"(eip));
+   debug("EIP = %x\n", (unsigned int) eip);
+   asm volatile ("popa");
+   asm volatile ("leave; iret");
+    // end Q9
+
+    // Q11
+   // Dev en C rajoute les frames de fonction non désirées...
+    // end Q11
+}
+
+void bp_trigger() {
+    asm volatile ("int3");
+    debug("after bp triggered\n");
+}
+
 void tp() {
-
-	// Initialisation de la GDT
+	idt_reg_t idtr;
+   	get_idtr(idtr);
+   	debug("IDT @ 0x%x\n", (unsigned int) idtr.addr);
+   	int_desc_t *bp_dsc = &idtr.desc[128];
+   	bp_dsc->offset_1 = (uint16_t)((uint32_t)sys_affichage);
+   	bp_dsc->offset_2 = (uint16_t)(((uint32_t)sys_affichage)>>16);
+	
+	compteur = malloc(sizeof(uint64_t));
+	*compteur = 0;
 	init_gdt();
-
+	sys_compteur();
 	// Identity Mapping du noyau
 	noyauIdentityMapped();
 }
