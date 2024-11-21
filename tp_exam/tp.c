@@ -13,7 +13,6 @@
 #define d3_sel  gdt_usr_seg_sel(d3_idx)
 #define ts_sel  gdt_krn_seg_sel(ts_idx)
 
-<<<<<<< HEAD
 uint64_t *compteur;
 
 void __attribute__((section(".user"))) sys_affichage(uint32_t *counter) {
@@ -31,8 +30,10 @@ void __attribute__((section(".user"))) sys_compteur() {
 
 void handle_compteur() {
 	asm volatile ("int3");
-	debug("Fin interruption");}
-}void tache1() {
+	debug("Fin interruption");
+}
+
+void tache1() {
    asm volatile ("mov %eax, %cr0");
    debug("after iret\n");
 }
@@ -56,7 +57,6 @@ void noyauIdentityMapped(){
 	uint32_t cr0 = get_cr0();
 	set_cr0(cr0|CR0_PG);
 
-}
 	// Préparer la pile pour l'exécution en ring 3 de la tache 1
    asm volatile (
    "push %0    \n" // ss
