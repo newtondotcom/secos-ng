@@ -30,7 +30,7 @@ SECTIONS
 
    . = ALIGN(4M);
    __user_start__ = .;
-   .user    : { *(.user)                       } : phuser
+   .user    : { *(.user)                       } : phsetup
    .user_data : { *(.user_data) *(.user_shared_mem) *(.user_stack) *(.user_bss) } : phsetup  
    __user_end__ = .;
 }

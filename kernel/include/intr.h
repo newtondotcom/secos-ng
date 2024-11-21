@@ -15,6 +15,7 @@
 #define BIOS_MISC_INTERRUPT           0x15
 #define BIOS_KBD_INTERRUPT            0x16
 #define BIOS_BOOT_INTERRUPT           0x19
+#define COMPTEUR_INTERRUPT            0x80
 
 /*
 ** BIOS services related to MISC_INTERRUPT

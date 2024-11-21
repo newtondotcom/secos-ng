@@ -24,6 +24,7 @@
 #define MF_EXCP    16
 #define MC_EXCP    18
 #define XF_EXCP    19
+#define CP_EXCEP   20
 
 /*
 ** Exceptions with error code

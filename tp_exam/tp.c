@@ -1,5 +1,8 @@
 /* GPLv2 (c) Airbus */
 #include <debug.h>
+#include <intr.h>
+#include <pagemem.h>
+#include <cr.h>
 
 #define c0_idx  1
 #define d0_idx  2
@@ -13,32 +16,23 @@
 #define d3_sel  gdt_usr_seg_sel(d3_idx)
 #define ts_sel  gdt_krn_seg_sel(ts_idx)
 
-uint64_t *compteur;
+uint32_t compteur;
 
 void __attribute__((section(".user"))) sys_affichage(uint32_t *counter) {
-	debug("Counter value: 0x%" PRIu32 "\n", *counter);
+	debug("Counter value: %d \n", *counter);
    //asm volatile ("mov %eax, %cr0");
    //debug("after iret\n");
 }
 
-void __attribute__((section(".user"))) sys_compteur() {
+void __attribute__((section(".user"))) sys_compteur(uint32_t *compteur) {
 	while(true){
-		*compteur = *compteur + 1;
-		handler_compteur();
+		*compteur += 1;
+		asm volatile("int $0x80");
+		sleep(1);
 	}
 }
 
-void handle_compteur() {
-	asm volatile ("int3");
-	debug("Fin interruption");
-}
-
-void tache1() {
-   asm volatile ("mov %eax, %cr0");
-   debug("after iret\n");
-}
-
-void noyauIdentityMapped(){
+/* void noyauIdentityMapped(){
 	// Allocation PGD et maj CR3
 	pde32_t *pgd = (pde32_t*)0x600000; // 00 0000 0001   -- 10 0000 0000   -- 0000 0000 0000
 	set_cr3((uint32_t)pgd);
@@ -67,12 +61,11 @@ void noyauIdentityMapped(){
    "iret"
    ::
     "i"(d0_sel),
-    "i"(c0_sel),
-    "r"(&test_ring0)
+    "i"(c0_sel)
    );
-}
+}*/
 
-void tacheIdentityMapped(){
+/*void tacheIdentityMapped(){
 	// Allocation PGD et maj CR3
 	pde32_t *pgd = (pde32_t*)0x602000; // 00 0000 0010   -- 10 0000 0000   -- 0000 0000 0000
 	set_cr3((uint32_t)pgd);
@@ -82,10 +75,11 @@ void tacheIdentityMapped(){
 
 	// Remplissage
 	for(int i=0;i<1024;i++) {
-	 	pg_set_entry(&ptb[i], PG_USR|PG_RW, i+1024);
-	}
+		pg_set_entry(&ptb[i], PG_USR|PG_RW, i+1024);
+	//}
 	pg_set_entry(&pgd[1], PG_KRN|PG_RW, page_nr(ptb));
 }
+}*/ 
 
 void test_ring0()
 {
@@ -94,34 +88,18 @@ void test_ring0()
     debug("We are in ring 0!\n");
     asm volatile("leave");
 }
-void bp_handler() {
-   asm volatile ("pusha");
-   debug("#BP handling\n");
-   uint32_t eip;
-   asm volatile ("mov 4(%%ebp), %0":"=r"(eip));
-   debug("EIP = %x\n", (unsigned int) eip);
-   asm volatile ("popa");
-   asm volatile ("leave; iret");
-   
-}
-
-void bp_trigger() {
-    asm volatile ("int3");
-    debug("after bp triggered\n");
-}
 
 void tp() {
+	intr_init();
 	idt_reg_t idtr;
    	get_idtr(idtr);
    	debug("IDT @ 0x%x\n", (unsigned int) idtr.addr);
    	int_desc_t *bp_dsc = &idtr.desc[128];
    	bp_dsc->offset_1 = (uint16_t)((uint32_t)sys_affichage);
    	bp_dsc->offset_2 = (uint16_t)(((uint32_t)sys_affichage)>>16);
-	
-	compteur = malloc(sizeof(uint64_t));
-	*compteur = 0;
-	init_gdt();
-	sys_compteur();
-	// Identity Mapping du noyau
-	noyauIdentityMapped();
+	//noyauIdentityMapped();
+	compteur = 0;
+	//init_gdt();
+	debug("Compteur %d \n", compteur);
+	sys_compteur(&compteur);
 }

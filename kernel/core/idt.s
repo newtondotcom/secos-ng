@@ -165,8 +165,14 @@ idt_trampoline:
         pushl   $19
         jmp     idt_common
 
-/* intel reserved 20-31 */
-        .rep	12
+/*compteur (yes) */
+        .align  16
+        pushl   $-1
+        pushl   $20
+        jmp     idt_common
+
+/* intel reserved 21-31 */
+        .rep	11
 	.align	16
 	iret
 	.endr
@@ -178,6 +184,7 @@ idt_trampoline:
  	push	$\nr
 	jmp	ack_pic1
 	.endr
+
 
 /* pic 2 irq 40-47 */
 	.irp    nr,40,41,42,43,44,45,46,47

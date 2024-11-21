@@ -3,6 +3,7 @@
 #include <cr.h>
 #include <debug.h>
 #include <info.h>
+#include <excp.h>
 
 extern info_t *info;
 
