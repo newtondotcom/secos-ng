@@ -122,13 +122,6 @@ void tp() {
 	*compteur = 0;
 	init_gdt();
 	sys_compteur();
-=======
-void tp() {
-
-	// Initialisation de la GDT
-	init_gdt();
-
->>>>>>> 1d3a54687615e5dbdc8ad4a434002fbbbe00629a
 	// Identity Mapping du noyau
 	noyauIdentityMapped();
 }
