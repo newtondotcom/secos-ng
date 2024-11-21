@@ -31,12 +31,11 @@ void __attribute__((section(".user"))) sys_compteur() {
 
 void handle_compteur() {
 	asm volatile ("int3");
-	debug("Fin interruption");
+	debug("Fin interruption");}
 =======
 void tache1() {
    asm volatile ("mov %eax, %cr0");
    debug("after iret\n");
->>>>>>> 1d3a54687615e5dbdc8ad4a434002fbbbe00629a
 }
 
 void noyauIdentityMapped(){
