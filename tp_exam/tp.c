@@ -18,18 +18,53 @@
 
 uint32_t compteur;
 
-void __attribute__((section(".user"))) sys_affichage(uint32_t *counter) {
+void __attribute__((section(".user"))) user1(uint32_t *compteur) {
+	while(true){
+		*compteur += 1; 
+		// Appel système pour signaler la mise à jour du compteur
+        asm volatile(
+            "movl $2, %%eax\n"         // Numéro de l'appel système pour sys_update_counter
+            "movl %0, %%ebx\n"         // Pointeur vers le compteur
+            "int $0x80\n"              // Interruption logicielle
+            :
+            : "r"(shared_counter)
+            : "%eax", "%ebx"
+        );
+	}
+}
+
+void __attribute__((section(".user"))) user2(uint32_t *counter) {
 	debug("Counter value: %d \n", *counter);
    //asm volatile ("mov %eax, %cr0");
    //debug("after iret\n");
 }
 
-void __attribute__((section(".user"))) sys_compteur(uint32_t *compteur) {
-	while(true){
-		*compteur += 1;
-		asm volatile("int $0x80");
-		sleep(1);
-	}
+void handler80(){ // affichage noyau appelé par la tache 2
+    uint32_t syscall_number;
+    uint32_t *user_pointer;
+
+    // Lire le numéro de l'appel système et les arguments dans les registres
+    asm volatile("movl %%eax, %0" : "=r"(syscall_number));
+    asm volatile("movl %%ebx, %0" : "=r"(user_pointer));
+
+    if (syscall_number == 1) { 
+        // Validation de l'adresse utilisateur (si nécessaire)
+        uint32_t *kernel_pointer = user_pointer;
+        
+        // Afficher la valeur du compteur
+        debug(*kernel_pointer);
+    }
+
+    // Restaurer le contexte utilisateur et retourner
+    asm volatile("iret");
+}
+
+void handler32(){ // horloge : irq0
+
+	// Changer le contexte en fonction de la tache active
+
+    // Restaurer le contexte utilisateur et retourner
+    asm volatile("iret");
 }
 
 /* void noyauIdentityMapped(){
