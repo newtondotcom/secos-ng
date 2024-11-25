@@ -1,103 +1,103 @@
 /* GPLv2 (c) Airbus */
 #include <debug.h>
 #include <intr.h>
-#include <pagemem.h>
 #include <cr.h>
-#include <gpr.h>
+#include <pagemem.h>
 
-#define c0_idx  1
-#define d0_idx  2
-#define c3_idx  3
-#define d3_idx  4
-#define ts_idx  5
+__attribute__((section(".user"))) void user1() {
+    while (1) {
+        debug("User 1\n");
+    }
+}
 
-#define c0_sel  gdt_krn_seg_sel(c0_idx)
-#define d0_sel  gdt_krn_seg_sel(d0_idx)
-#define c3_sel  gdt_usr_seg_sel(c3_idx)
-#define d3_sel  gdt_usr_seg_sel(d3_idx)
-#define ts_sel  gdt_krn_seg_sel(ts_idx)
+__attribute__((section(".user"))) void user2() {
+    while (1) {
+        debug("User 2\n");
+    }
+}
 
-uint32_t compteur;
+void init_gdt() {
+    
+}
 
-// void __attribute__((section(".user"))) user1(uint32_t *compteur) {
-// 	while(true){
-// 		*compteur += 1; 
-// 	}
-// }
-
-// void __attribute__((section(".user"))) user2(uint32_t *counter) {
-// 	debug("Counter value: %d \n", *counter);
-//    //asm volatile ("mov %eax, %cr0");
-//    //debug("after iret\n");
-// 		// Appel système pour signaler la mise à jour du compteur
-//         asm volatile(
-//             "movl $2, %%eax\n"         // Numéro de l'appel système pour sys_update_counter
-//             "movl %0, %%ebx\n"         // Pointeur vers le compteur
-//             "int $0x80\n"              // Interruption logicielle
-//             :
-//             : "r"(shared_counter)
-//             : "%eax", "%ebx"
-//         );
-// }
-
-// void handler80(){ // affichage noyau appelé par la tache 2
-//     uint32_t syscall_number;
-//     uint32_t *user_pointer;
-
-//     // Lire le numéro de l'appel système et les arguments dans les registres
-//     asm volatile("movl %%eax, %0" : "=r"(syscall_number));
-//     asm volatile("movl %%ebx, %0" : "=r"(user_pointer));
-
-//     if (syscall_number == 1) { 
-//         // Validation de l'adresse utilisateur (si nécessaire)
-//         uint32_t *kernel_pointer = user_pointer;
-        
-//         // Afficher la valeur du compteur
-//         debug(*kernel_pointer);
-//     }
-
-//     // Restaurer le contexte utilisateur et retourner
-//     asm volatile("iret");
-// }
-
-void handler32(){ // horloge : irq0
-
-	// Changer le contexte en fonction de la tache active
-	debug("BONJOUR");
-    // Restaurer le contexte utilisateur et retourner
-    //asm volatile("iret");
+void clock_handler() {
+    asm volatile ("pusha");
+    debug("CLOCK INTERRUPT\n");
+    asm volatile ("popa");
+    asm volatile ("leave; iret");
 }
 
 void init_idt() {
-    debug("\nInterrupt configuration... \n");
-    debug("\tGetting idtr adress... ");
-    idt_reg_t idtr; 
+    idt_reg_t idtr;
     get_idtr(idtr);
-    debug(" Success !\n");
-    debug("\t\tidtr addr : %lx \n", idtr.addr);
-
-    //Interruption de l'horloge
-    debug("\tConfiguring clock interrupt... ");
-    idtr.desc[32].offset_1 = (int) &handler32;
-    debug(" Success !\n");
+    debug("IDT @ 0x%x\n", (unsigned int) idtr.addr); 
+    int_desc_t *clock_dsc = &idtr.desc[32];
+    clock_dsc->offset_1 = (uint16_t)((uint32_t)clock_handler);
+    clock_dsc->offset_2 = (uint16_t)(((uint32_t)clock_handler) >> 16);
+    asm volatile ("sti");
 }
 
-// void set_handler(uint32_t num, uint32_t handler) {
-// 	idt_reg_t idtr;
-// 	get_idtr(idtr);
-// 	int_desc_t *dsc = &idtr.desc[num];
-// 	dsc->offset_1 = (uint16_t)handler;
-// 	dsc->offset_2 = (uint16_t)(handler >> 16);
-// }
+void init_kernel_pgd() {
+    debug("--------------------------------\n");
+    uint32_t cr3 = get_cr3();
+	debug("Valeur courante du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("Initialisation du PGD du noyau à l'adresse physique 0x600000\n");
+    pde32_t *pgd = (pde32_t*)0x600000;
+	set_cr3((uint32_t)pgd);
+    cr3 = get_cr3();
+    memset((void*)pgd, 0, PAGE_SIZE);
+    debug("Nouvelle valeur du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("--------------------------------\n");
+}
+
+void init_user1_pgd() {
+    debug("--------------------------------\n");
+    debug("Initialisation du PGD de la tâche user1 à l'adresse physique 0x700000\n");
+    pde32_t *pgd = (pde32_t*)0x700000;
+	set_cr3((uint32_t)pgd);
+    uint32_t cr3 = get_cr3();
+    memset((void*)pgd, 0, PAGE_SIZE);
+    debug("Nouvelle valeur du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("Réaffectation du registre CR3 au PGD du noyau...\n");
+    set_cr3((uint32_t)(pde32_t*)0x600000);
+    cr3 = get_cr3();
+    debug("Nouvelle valeur du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("--------------------------------\n");
+}
+
+void init_user2_pgd() {
+    debug("--------------------------------\n");
+    debug("Initialisation du PGD de la tâche user2 à l'adresse physique 0x800000\n");
+    pde32_t *pgd = (pde32_t*)0x800000;
+	set_cr3((uint32_t)pgd);
+    uint32_t cr3 = get_cr3();
+    memset((void*)pgd, 0, PAGE_SIZE);
+    debug("Nouvelle valeur du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("Réaffectation du registre CR3 au PGD du noyau...\n");
+    set_cr3((uint32_t)(pde32_t*)0x600000);
+    cr3 = get_cr3();
+    debug("Nouvelle valeur du registre CR3 : 0x%x\n", (unsigned int) cr3);
+    debug("--------------------------------\n");
+}
+
+void enable_paging() {
+    debug("--------------------------------\n");
+    debug("Acivation du paging...\n");
+    uint32_t cr0 = get_cr0();
+	set_cr0(cr0|CR0_PG);
+    debug("Acivation réussie !\n");
+    debug("--------------------------------\n");
+}
 
 void tp() {
-	init_idt();
-	// set_handler(0x80, (uint32_t)handler80);
-	int count = 0;
-	// set_handler(0x20, (uint32_t)handler32);
-	asm volatile ("sti");
-	asm volatile ("int $32");
-	while(1) {
-		count++;
-	}
+    int count = 0;
+    init_gdt();
+    init_idt();
+    init_kernel_pgd();
+    init_user1_pgd();
+    init_user2_pgd();
+    enable_paging();
+    while (1) {
+        count++;
+    }
 }
