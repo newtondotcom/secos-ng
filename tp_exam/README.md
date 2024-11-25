@@ -98,6 +98,7 @@ Ceci vous génère une archive compressée contenant vos modifications, que vous
 pouvez m'envoyer par mail.
 
 ##  Réponse question
+
 Chaque application soit avoir son jeu de tables de pages propre. Dans chacun des 2 jeux, le code doit être identitiy mappé, par contre pour la zone de mémoire z_phy (physique) partagée à des adresses virtuelles différentes implique que dans un jeu de table, c'est les d'entrées d1 et t1 qui pointeront vers z_phy, alors que dans l autre jeu de rable ce seront les entrées d2 et t2 qui pointeront vers cette zone.
 
 Et à un instant, 1 seul jeu de table est utilisé : cr3 est chargé avec un certain jeu ; et le scheduling de la tache suivante se matérialise entre autres par un changement de cr3 pour utiliser l autre jeu de tables.
