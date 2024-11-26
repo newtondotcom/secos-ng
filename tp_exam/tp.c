@@ -3,6 +3,7 @@
 #include <intr.h>
 #include <cr.h>
 #include <pagemem.h>
+#include <io.h>
 
 __attribute__((section(".user"))) void user1() {
     while (1) {
@@ -17,24 +18,32 @@ __attribute__((section(".user"))) void user2() {
 }
 
 void init_gdt() {
-    
 }
 
 void clock_handler() {
+    // Sauvegarde du contexte
     asm volatile ("pusha");
+    // TODO : Changement de contexte
     debug("CLOCK INTERRUPT\n");
+    // Indiquer au hardware qu'on a traité l'interruption
+    outb(0x20, 0x20);
+    // Restauration du contexte
     asm volatile ("popa");
     asm volatile ("leave; iret");
 }
 
 void init_idt() {
+    debug("--------------------------------\n");
     idt_reg_t idtr;
     get_idtr(idtr);
     debug("IDT @ 0x%x\n", (unsigned int) idtr.addr); 
+    // Référencement du handler pour l'interruption 32
     int_desc_t *clock_dsc = &idtr.desc[32];
     clock_dsc->offset_1 = (uint16_t)((uint32_t)clock_handler);
     clock_dsc->offset_2 = (uint16_t)(((uint32_t)clock_handler) >> 16);
+    // Activation des interruptions matérielles
     asm volatile ("sti");
+    debug("--------------------------------\n");
 }
 
 void init_kernel_pgd() {
@@ -96,7 +105,7 @@ void tp() {
     init_kernel_pgd();
     init_user1_pgd();
     init_user2_pgd();
-    enable_paging();
+    //enable_paging();
     while (1) {
         count++;
     }
